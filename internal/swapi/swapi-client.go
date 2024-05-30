@@ -3,7 +3,6 @@ package swapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 )
@@ -40,14 +39,14 @@ func (swapiClient *SWAPIClient) ReadPlanetById(planetID string) (*Planet, error)
 		return nil, httpError
 	}
 	if resp.StatusCode >= 400 {
-		return nil, errors.New(fmt.Sprintf("Got HTTP status %s", resp.Status))
+		return nil, fmt.Errorf("Got HTTP status %s", resp.Status)
 	}
 
 	var planet Planet
 
 	jsonError := json.NewDecoder(resp.Body).Decode(&planet)
 	if jsonError != nil {
-		fmt.Println(jsonError)
+		return nil, jsonError
 	}
 
 	return &planet, nil
@@ -67,14 +66,14 @@ func (swapiClient *SWAPIClient) ReadPlanetByName(planetName string) (*Planet, er
 		return nil, httpError
 	}
 	if resp.StatusCode >= 400 {
-		return nil, errors.New(fmt.Sprintf("Got HTTP status %s", resp.Status))
+		return nil, fmt.Errorf("Got HTTP status %s", resp.Status)
 	}
 
 	var planet Planet
 
 	jsonError := json.NewDecoder(resp.Body).Decode(&planet)
 	if jsonError != nil {
-		fmt.Println(jsonError)
+		return nil, jsonError
 	}
 
 	return &planet, nil
@@ -101,7 +100,7 @@ func (swapiClient *SWAPIClient) CreateOrUpdatePlanet(planet *Planet) (*Planet, e
 		return nil, httpError
 	}
 	if resp.StatusCode >= 400 {
-		return nil, errors.New(fmt.Sprintf("Got HTTP status %s", resp.Status))
+		return nil, fmt.Errorf("Got HTTP status %s", resp.Status)
 	}
 
 	jsonError := json.NewDecoder(resp.Body).Decode(&planet)
@@ -127,7 +126,7 @@ func (swapiClient *SWAPIClient) DeletePlanet(planetId string) error {
 		return err
 	}
 	if resp.StatusCode >= 400 {
-		return errors.New(fmt.Sprintf("Got HTTP status %s", resp.Status))
+		return fmt.Errorf("Got HTTP status %s", resp.Status)
 	}
 	return nil
 }
